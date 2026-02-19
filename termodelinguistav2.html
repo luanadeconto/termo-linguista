@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Termo de Linguista</title>
+<style>
+  body { font-family: Arial; text-align: center; }
+  .letra {
+    width: 40px;
+    height: 40px;
+    margin: 3px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    border: 1px solid #999;
+  }
+  .verde { background-color: #6aaa64; color: white; }
+  .amarelo { background-color: #c9b458; color: white; }
+  .cinza { background-color: #787c7e; color: white; }
+</style>
+</head>
+<body>
+
+<h2>Termo de Linguista</h2>
+<p>Tentativas restantes: <span id="tentativas">6</span></p>
+<p>Pontuação: <span id="pontuacao">0</span></p>
+
+<input type="text" id="tentativa" maxlength="5">
+<button onclick="verificar()">Enviar</button>
+<button onclick="reiniciar()">Reiniciar</button>
+
+<div id="resultado"></div>
+<p id="mensagem"></p>
+
+<script>
+
+const palavrasPermitidas = ["AMAGO", "OPERA", "TITIA", "TRENS", "LETRA", "TRAGO"];
+
+let palavraSecreta;
+let tentativasRestantes;
+let pontuacao;
+let jogoAtivo;
+
+function iniciarJogo() {
+  palavraSecreta = palavrasPermitidas[Math.floor(Math.random() * palavrasPermitidas.length)];
+  tentativasRestantes = 6;
+  pontuacao = 0;
+  jogoAtivo = true;
+  document.getElementById("tentativas").textContent = tentativasRestantes;
+  document.getElementById("pontuacao").textContent = pontuacao;
+  document.getElementById("resultado").innerHTML = "";
+  document.getElementById("mensagem").textContent = "";
+  document.getElementById("tentativa").value = "";
+}
+
+function verificar() {
+  if (!jogoAtivo) return;
+
+  const tentativaInput = document.getElementById("tentativa");
+  const tentativa = tentativaInput.value.toUpperCase();
+
+  if (tentativa.length !== palavraSecreta.length) {
+    alert("A palavra deve ter 5 letras.");
+    return;
+  }
+
+  const resultadoDiv = document.getElementById("resultado");
+  const linha = document.createElement("div");
+
+  for (let i = 0; i < tentativa.length; i++) {
+    const span = document.createElement("span");
+    span.classList.add("letra");
+    span.textContent = tentativa[i];
+
+    if (tentativa[i] === palavraSecreta[i]) {
+      span.classList.add("verde");
+    } else if (palavraSecreta.includes(tentativa[i])) {
+      span.classList.add("amarelo");
+    } else {
+      span.classList.add("cinza");
+    }
+
+    linha.appendChild(span);
+  }
+
+  resultadoDiv.appendChild(linha);
+
+  tentativasRestantes--;
+  document.getElementById("tentativas").textContent = tentativasRestantes;
+
+  if (tentativa === palavraSecreta) {
+    pontuacao = tentativasRestantes * 10 + 10;
+    document.getElementById("pontuacao").textContent = pontuacao;
+    document.getElementById("mensagem").textContent =
+      "Parabéns! Você acertou a palavra: " + palavraSecreta;
+    jogoAtivo = false;
+  } 
+  else if (tentativasRestantes === 0) {
+    document.getElementById("mensagem").textContent =
+      "Fim de jogo! A palavra era: " + palavraSecreta;
+    jogoAtivo = false;
+  }
+
+  tentativaInput.value = "";
+}
+
+function reiniciar() {
+  iniciarJogo();
+}
+
+iniciarJogo();
+
+</script>
+
+</body>
+</html>
